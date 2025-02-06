@@ -3,15 +3,14 @@ import { withMaxAllowedInstancesGuard } from "../utils/useMaxAllowedInstances";
 import { LangburpContext } from "../contexts/LangburpContext";
 import type { LangburpContextType } from "../contexts/LangburpContext";
 
-interface LangburpProviderProps {
+interface LangburpProviderProps extends LangburpContextType {
   children: React.ReactNode;
-  publicApiKey: string;
 }
 
 // Base provider component
-const LangburpProviderBase = ({ children, publicApiKey }: LangburpProviderProps) => {
+const LangburpProviderBase = ({ children, publicApiKey, apiBaseUrl, onAuthorize }: LangburpProviderProps) => {
   return (
-    <LangburpContext.Provider value={{ publicApiKey }}>
+    <LangburpContext.Provider value={{ publicApiKey, apiBaseUrl, onAuthorize }}>
       {children}
     </LangburpContext.Provider>
   );

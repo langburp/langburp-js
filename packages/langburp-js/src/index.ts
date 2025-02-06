@@ -7,6 +7,8 @@ export { ApiClient };
 export type LangburpClientParams = {
   publicApiKey: string;
   secretApiKey?: string;
+
+  apiBaseUrl?: string;
 }
 
 export class LangburpClient {
@@ -17,7 +19,9 @@ export class LangburpClient {
   public messages: MessagesApi;
 
   constructor(params: LangburpClientParams) {
+    const baseUrl = params.apiBaseUrl || "https://api.langburp.com";
     const config = new Configuration({
+      basePath: baseUrl,
       apiKey: (name: string) => {
         if (name === "x-api-key") {
           return params.publicApiKey;

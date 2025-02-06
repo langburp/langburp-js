@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { LangburpProvider } from "@langburp/react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -21,10 +22,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  if (!process.env.NEXT_PUBLIC_LANGBURP_PUBLIC_API_KEY) {
+    throw new Error("LANGBURP_PUBLIC_API_KEY is not set");
+  }
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+        <LangburpProvider
+          publicApiKey={process.env.NEXT_PUBLIC_LANGBURP_PUBLIC_API_KEY}
+          apiBaseUrl={process.env.NEXT_PUBLIC_LANGBURP_API_BASE_URL} // Optional, defaults to https://api.langburp.com
+        >
+          {children}
+        </LangburpProvider>
       </body>
     </html>
   );
