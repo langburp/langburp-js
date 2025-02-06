@@ -1,0 +1,1272 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "My API",
+    "description": "This is the API"
+  },
+  "servers": [
+    {
+      "url": "http://api.langburp.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      },
+      "secretApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-secret-key"
+      }
+    },
+    "schemas": {
+      "ConnectionMetadata": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "example": "org_id_123"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "example": "ACME Corp"
+          }
+        },
+        "additionalProperties": {},
+        "example": {
+          "id": "org_id_123",
+          "name": "ACME Corp"
+        }
+      },
+      "WebhookMessageReceivedBodySchema": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string",
+            "enum": [
+              "message"
+            ]
+          },
+          "eventPayload": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "conversationId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "conversationId"
+            ]
+          },
+          "project": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "webhookUrl": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "webhookUrl"
+            ]
+          },
+          "integration": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "provider": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "status",
+              "provider"
+            ]
+          },
+          "connection": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "metadata": {
+                "$ref": "#/components/schemas/ConnectionMetadata"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "metadata"
+            ]
+          },
+          "callbackUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "callbackContext": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "event",
+          "eventPayload",
+          "project",
+          "integration",
+          "connection",
+          "callbackUrl",
+          "callbackContext"
+        ]
+      },
+      "WebhookSlashCommandReceivedBodySchema": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string",
+            "enum": [
+              "slash_command"
+            ]
+          },
+          "eventPayload": {
+            "type": "object",
+            "properties": {
+              "command": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "conversationId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "command",
+              "text",
+              "conversationId"
+            ]
+          },
+          "project": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "webhookUrl": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "webhookUrl"
+            ]
+          },
+          "integration": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "provider": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "status",
+              "provider"
+            ]
+          },
+          "connection": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "metadata": {
+                "$ref": "#/components/schemas/ConnectionMetadata"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "metadata"
+            ]
+          },
+          "callbackUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "callbackContext": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "event",
+          "eventPayload",
+          "project",
+          "integration",
+          "connection",
+          "callbackUrl",
+          "callbackContext"
+        ]
+      },
+      "WebhookConnectionConnectedBodySchema": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string",
+            "enum": [
+              "connection.connected"
+            ]
+          },
+          "eventPayload": {
+            "type": "object",
+            "properties": {
+              "connectionId": {
+                "type": "string"
+              },
+              "providerData": {}
+            },
+            "required": [
+              "connectionId"
+            ]
+          },
+          "project": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "webhookUrl": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "webhookUrl"
+            ]
+          },
+          "integration": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "provider": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "status",
+              "provider"
+            ]
+          },
+          "connection": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "metadata": {
+                "$ref": "#/components/schemas/ConnectionMetadata"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "metadata"
+            ]
+          },
+          "callbackUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "callbackContext": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "event",
+          "eventPayload",
+          "project",
+          "integration",
+          "connection",
+          "callbackUrl",
+          "callbackContext"
+        ]
+      },
+      "WebhookConnectionUserConnectedBodySchema": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string",
+            "enum": [
+              "connection_user.connected"
+            ]
+          },
+          "eventPayload": {
+            "type": "object",
+            "properties": {
+              "connectionId": {
+                "type": "string"
+              },
+              "connectionUserId": {
+                "type": "string"
+              },
+              "providerData": {}
+            },
+            "required": [
+              "connectionId",
+              "connectionUserId"
+            ]
+          },
+          "project": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "webhookUrl": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "webhookUrl"
+            ]
+          },
+          "integration": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "provider": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "status",
+              "provider"
+            ]
+          },
+          "connection": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "metadata": {
+                "$ref": "#/components/schemas/ConnectionMetadata"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "metadata"
+            ]
+          },
+          "callbackUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "callbackContext": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "event",
+          "eventPayload",
+          "project",
+          "integration",
+          "connection",
+          "callbackUrl",
+          "callbackContext"
+        ]
+      },
+      "WebhookRequestBodySchema": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/WebhookMessageReceivedBodySchema"
+          },
+          {
+            "$ref": "#/components/schemas/WebhookSlashCommandReceivedBodySchema"
+          },
+          {
+            "$ref": "#/components/schemas/WebhookConnectionConnectedBodySchema"
+          },
+          {
+            "$ref": "#/components/schemas/WebhookConnectionUserConnectedBodySchema"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "event",
+          "mapping": {
+            "message": "#/components/schemas/WebhookMessageReceivedBodySchema",
+            "slash_command": "#/components/schemas/WebhookSlashCommandReceivedBodySchema",
+            "connection.connected": "#/components/schemas/WebhookConnectionConnectedBodySchema",
+            "connection_user.connected": "#/components/schemas/WebhookConnectionUserConnectedBodySchema"
+          }
+        }
+      },
+      "ConnectionUserMetadata": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "example": "user_id_123"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "example": "Bob Smith"
+          }
+        },
+        "additionalProperties": {},
+        "example": {
+          "id": "user_id_123",
+          "name": "Bob Smith"
+        }
+      },
+      "AuthorizeEndUserSuccessResponseSchema": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "AuthorizeEndUserErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Failed to authorize end user"
+          },
+          "debug": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "AuthorizeEndUserSchema": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "example": "auth_state_123"
+          },
+          "connectionMetadata": {
+            "$ref": "#/components/schemas/ConnectionMetadata"
+          },
+          "connectionUserMetadata": {
+            "$ref": "#/components/schemas/ConnectionUserMetadata"
+          }
+        }
+      },
+      "ConnectIntegrationSchema": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "example": "auth_state_123"
+          },
+          "redirectUrl": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/redirect-page-with-frontend-sdk"
+          }
+        },
+        "required": [
+          "redirectUrl"
+        ]
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {
+    "/v1/connections/{connectionId}": {
+      "put": {
+        "tags": [
+          "connections"
+        ],
+        "operationId": "updateConnection",
+        "description": "Update a connection",
+        "summary": "Update a connection",
+        "security": [
+          {
+            "apiKeyAuth": [],
+            "secretApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "connectionId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "metadata": {
+                    "$ref": "#/components/schemas/ConnectionMetadata"
+                  }
+                },
+                "required": [
+                  "metadata"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The connection was updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "connections"
+        ],
+        "operationId": "deleteConnection",
+        "description": "Delete a connection",
+        "summary": "Delete a connection",
+        "security": [
+          {
+            "apiKeyAuth": [],
+            "secretApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "connectionId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The connection was deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/connections/{connectionId}/users/{connectionUserId}": {
+      "put": {
+        "tags": [
+          "connections"
+        ],
+        "operationId": "updateConnectionUser",
+        "description": "Update a connection user",
+        "summary": "Update a connection user",
+        "security": [
+          {
+            "apiKeyAuth": [],
+            "secretApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "connectionId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "connectionUserId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "metadata": {
+                    "$ref": "#/components/schemas/ConnectionUserMetadata"
+                  }
+                },
+                "required": [
+                  "metadata"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The connection user was updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "connections"
+        ],
+        "operationId": "deleteConnectionUser",
+        "description": "Delete a connection user",
+        "summary": "Delete a connection user",
+        "security": [
+          {
+            "apiKeyAuth": [],
+            "secretApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "connectionId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "connectionUserId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The connection user was deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/connections/{connectionId}/users/{connectionUserId}/messages": {
+      "post": {
+        "tags": [
+          "messages"
+        ],
+        "operationId": "connectionUserPostMessage",
+        "description": "Send a message to a connection user",
+        "summary": "Send a message to a connection user",
+        "security": [
+          {
+            "apiKeyAuth": [],
+            "secretApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "connectionId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "connectionUserId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "Hello, world!"
+                  }
+                },
+                "required": [
+                  "message"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The message was sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "msg_123"
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/connections/{connectionId}/conversations/{conversationId}/messages": {
+      "post": {
+        "tags": [
+          "messages"
+        ],
+        "operationId": "conversationPostMessage",
+        "description": "Send a message to a conversation",
+        "summary": "Send a message to a conversation",
+        "security": [
+          {
+            "apiKeyAuth": [],
+            "secretApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "connectionId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "conv_123"
+            },
+            "required": true,
+            "name": "conversationId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "description": "The message to send",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "Hello, world!"
+                  }
+                },
+                "required": [
+                  "message"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The message was sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "msg_123"
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/connections/{connectionId}/conversations": {
+      "get": {
+        "tags": [
+          "conversations"
+        ],
+        "operationId": "getConversations",
+        "description": "Get conversations for a connection",
+        "summary": "Get conversations for a connection",
+        "security": [
+          {
+            "apiKeyAuth": [],
+            "secretApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "connectionId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The conversations were fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "conversations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "conv_123"
+                          }
+                        },
+                        "required": [
+                          "id"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "conversations"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/authorize": {
+      "post": {
+        "tags": [
+          "end-user-auth"
+        ],
+        "operationId": "authorizeEndUser",
+        "description": "Authorize end user",
+        "summary": "Authorize end user for a connection",
+        "security": [
+          {
+            "apiKeyAuth": [],
+            "secretApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Authorize end user for a connection",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthorizeEndUserSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authorize end user for a connection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorizeEndUserSuccessResponseSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to authorize end user for a connection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorizeEndUserErrorResponseSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/connect/integrations": {
+      "get": {
+        "tags": [
+          "connect"
+        ],
+        "operationId": "getAvailableIntegrations",
+        "description": "Get available integrations that are ready to accept connections",
+        "summary": "Get available integrations",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of available integrations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "integrations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "provider": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "provider",
+                          "name",
+                          "status"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "integrations"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/connect/integrations/{integrationId}/connections": {
+      "post": {
+        "tags": [
+          "connect"
+        ],
+        "operationId": "connectIntegration",
+        "description": "Initialize a connection to an integration",
+        "summary": "Connect to an integration",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "integrationId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "description": "Connection initialization parameters",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectIntegrationSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connection initialization successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userWillReturn": {
+                      "type": "boolean"
+                    },
+                    "installUrl": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  },
+                  "required": [
+                    "userWillReturn",
+                    "installUrl"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "debug": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Integration not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "webhooks": {}
+}
