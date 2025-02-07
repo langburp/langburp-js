@@ -1,5 +1,11 @@
 # @langburp/react
 
+## 0.0.2
+
+### Patch Changes
+
+- fd278e6: package build updates
+
 ## 0.0.1
 
 ### Patch Changes

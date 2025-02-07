@@ -1,5 +1,13 @@
 # @langburp/webhook
 
+## 0.0.2
+
+### Patch Changes
+
+- fd278e6: package build updates
+- Updated dependencies [fd278e6]
+  - @langburp/langburp-js@0.0.2
+
 ## 0.0.1
 
 ### Patch Changes

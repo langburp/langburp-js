@@ -1,6 +1,6 @@
 {
   "name": "@langburp/webhook",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "./lib/index.js",
   "module": "./lib/index.mjs",
   "types": "./lib/index.d.ts",
@@ -8,7 +8,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --out-dir lib --dts --format cjs,esm --tsconfig tsconfig.json --no-splitting",
     "dev": "tsup src/index.ts --out-dir lib --dts --format cjs,esm --tsconfig tsconfig.json --no-splitting --watch",
