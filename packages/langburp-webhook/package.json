@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "main": "./lib/index.js",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup src/index.ts --out-dir lib --dts --format cjs,esm --tsconfig tsconfig.json --no-splitting",
     "dev": "tsup src/index.ts --out-dir lib --dts --format cjs,esm --tsconfig tsconfig.json --no-splitting --watch",
@@ -25,7 +28,7 @@
   "bugs": {
     "url": "https://github.com/langburp/langburp-js/issues"
   },
-  "description": "Langburp Webhook Handler",
+  "description": "Langburp Webhook SDK",
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",

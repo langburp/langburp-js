@@ -2,6 +2,9 @@
   "name": "@langburp/react",
   "version": "0.0.0",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./lib/index.js",
   "scripts": {
     "build": "tsup src/index.ts --out-dir lib --dts --format cjs,esm --tsconfig tsconfig.json --no-splitting",
