@@ -1,6 +1,6 @@
 {
   "name": "@langburp/webhook",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "./lib/index.js",
   "private": false,
   "publishConfig": {
@@ -42,4 +42,4 @@
   "dependencies": {
     "@langburp/langburp-js": "*"
   }
-} 
+}
