@@ -16,15 +16,18 @@ const LangburpProviderBase = ({ children, publicApiKey, apiBaseUrl, onAuthorize 
   );
 };
 
-const multipleLangburpProvidersError = 
-  "Multiple LangburpProvider instances detected. Only one instance can be used at a time.";
+// TODO Fix this causes type errors with React 18 in local testing
+// const multipleLangburpProvidersError = 
+//   "Multiple LangburpProvider instances detected. Only one instance can be used at a time.";
 
-const LangburpProvider = withMaxAllowedInstancesGuard(
-  LangburpProviderBase,
-  'LangburpProvider',
-  multipleLangburpProvidersError
-);
+// const LangburpProvider = withMaxAllowedInstancesGuard(
+//   LangburpProviderBase,
+//   'LangburpProvider',
+//   multipleLangburpProvidersError
+// );
 
-LangburpProvider.displayName = 'LangburpProvider';
+// LangburpProvider.displayName = 'LangburpProvider';
 
-export { LangburpProvider }; 
+// export { LangburpProvider }; 
+
+export { LangburpProviderBase as LangburpProvider };

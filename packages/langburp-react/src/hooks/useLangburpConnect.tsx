@@ -34,7 +34,7 @@ export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) =>
 
   const connect = async (integrationKindOrId: string) => {
     let integrationId = integrationKindOrId;
-    if (integrationKindOrId in ProviderKinds) {
+    if ((Object.values(ProviderKinds) as string[]).includes(integrationKindOrId)) {
       integrationId = integrations.find(integration => integration.provider === integrationKindOrId)?.id ?? (() => {
         throw new Error(`No integration found for provider kind ${integrationKindOrId}`)
       })();
