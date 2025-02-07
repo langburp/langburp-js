@@ -2,12 +2,15 @@
   "name": "@langburp/langburp-js",
   "version": "0.0.1",
   "main": "./lib/index.js",
+  "module": "./lib/index.mjs",
+  "types": "./lib/index.d.ts",
   "private": false,
   "publishConfig": {
     "access": "public"
   },
+  "files": ["lib"],
   "scripts": {
-    "generate": "rm -rf ./src/langburpapi_client && openapi-generator-cli generate -i openapi-v3.1.0.json -g typescript-fetch -o ./src/langburpapi_client --additional-properties=useSingleRequestParameter=true,withSeparateModelsAndApi=true,apiPackage=server,modelPackage=model --openapi-normalizer REFACTOR_ALLOF_WITH_PROPERTIES_ONLY=true",
+    "codegen": "rm -rf ./src/langburpapi_client && openapi-generator-cli generate -i openapi-v3.1.0.json -g typescript-fetch -o ./src/langburpapi_client --additional-properties=useSingleRequestParameter=true,withSeparateModelsAndApi=true,apiPackage=server,modelPackage=model --openapi-normalizer REFACTOR_ALLOF_WITH_PROPERTIES_ONLY=true",
     "build": "tsup src/index.ts --out-dir lib --dts --format cjs,esm --tsconfig tsconfig.json --no-splitting",
     "dev": "tsup src/index.ts --out-dir lib --dts --format cjs,esm --tsconfig tsconfig.json --no-splitting --watch",
     "lint": "eslint . --max-warnings 0",

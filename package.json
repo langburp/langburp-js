@@ -5,8 +5,10 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
+    "test": "turbo test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "generate": "cd packages/langburp-js && npm run generate && npm run build"
+    "codegen": "turbo run codegen",
+    "publish-packages": "turbo run codegen build && changeset version && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "2.27.12",
