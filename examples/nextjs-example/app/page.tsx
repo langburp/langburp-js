@@ -2,13 +2,9 @@
 
 import { useLangburpConnect } from "@langburp/react";
 import { authorizeEndUserForLangburp } from "./_actions/langburp";
-import { usePathname, useSearchParams } from "next/navigation";
 
 export default function Home() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const { integrations, result, isLoading, connect } = useLangburpConnect({
-    currentUrl: `${window.location.origin}${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`,
     onAuthorize: async (state) => {
       const res = await authorizeEndUserForLangburp(state);
       return res;

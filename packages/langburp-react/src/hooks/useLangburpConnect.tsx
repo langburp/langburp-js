@@ -8,7 +8,7 @@ type LangburpConnectResult = {
   success: boolean;
   connectionId?: string;
   connectionUserId?: string;
-  openAppUrl?: string; 
+  openAppUrl?: string;
   openBrowserUrl?: string;
   error?: string;
 } | null;
@@ -32,6 +32,8 @@ export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) =>
   const [integrations, setIntegrations] = useState<Awaited<ReturnType<typeof apiClient.connect.getAvailableIntegrations>>['integrations']>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [result, setResult] = useState<LangburpConnectResult>(null);
+
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : null;
 
   const mustAuthorizeEndUser = async (state?: string) => {
     if (!context.onAuthorize) {
@@ -99,11 +101,10 @@ export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) =>
   }, [])
 
   useEffect(() => {
-    const url = context.currentUrl || (typeof window !== 'undefined' ? window.location.href : null);
-    if (!url) return;
+    if (!currentUrl) return;
 
     try {
-      const urlObj = new URL(url);
+      const urlObj = new URL(currentUrl);
       const params = new URLSearchParams(urlObj.search);
 
       if (params.get('_langburp') !== 'true') return;
@@ -127,7 +128,7 @@ export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) =>
     } catch (error) {
       console.error('Failed to parse URL:', error);
     }
-  }, [context.currentUrl]);
+  }, [currentUrl]);
 
   return {
     integrations,
