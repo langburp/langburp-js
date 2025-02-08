@@ -4,28 +4,41 @@ import { LangburpClient } from "@langburp/langburp-js";
 import { ProviderKinds } from "../utils/provider-metadata";
 import type { LangburpContextType } from "../contexts/LangburpContext";
 
+type LangburpConnectResult = {
+  success: boolean;
+  connectionId?: string;
+  connectionUserId?: string;
+  openAppUrl?: string; 
+  openBrowserUrl?: string;
+  error?: string;
+} | null;
+
 export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) => {
-  const context = useContext(LangburpContext);
-  if (!context) {
+  const contextFromProvider = useContext(LangburpContext);
+  if (!contextFromProvider) {
     throw new Error("useLangburpConnect must be used within a LangburpProvider");
   }
+
+  const context = useMemo(() => ({
+    ...contextFromProvider,
+    ...hookContext,
+  }), [contextFromProvider, hookContext]);
 
   const apiClient = useMemo(() => new LangburpClient({
     apiBaseUrl: context.apiBaseUrl,
     publicApiKey: context.publicApiKey,
   }), [context.apiBaseUrl, context.publicApiKey]);
 
-  const onAuthorize = hookContext.onAuthorize || context.onAuthorize;
-
   const [integrations, setIntegrations] = useState<Awaited<ReturnType<typeof apiClient.connect.getAvailableIntegrations>>['integrations']>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [result, setResult] = useState<LangburpConnectResult>(null);
 
   const mustAuthorizeEndUser = async (state?: string) => {
-    if (!onAuthorize) {
+    if (!context.onAuthorize) {
       throw new Error("onAuthorize is required");
     }
     try {
-      return await onAuthorize(state)
+      return await context.onAuthorize(state)
     } catch (error) {
       console.error(error)
       throw new Error('An error occurred while attempting to authorize the end user. Please try again.')
@@ -41,7 +54,7 @@ export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) =>
     }
     try {
       let authResp;
-      if (onAuthorize) {
+      if (context.onAuthorize) {
         authResp = await mustAuthorizeEndUser();
       } else {
         authResp = {}
@@ -85,10 +98,41 @@ export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) =>
     fetchIntegrations()
   }, [])
 
+  useEffect(() => {
+    const url = context.currentUrl || (typeof window !== 'undefined' ? window.location.href : null);
+    if (!url) return;
+
+    try {
+      const urlObj = new URL(url);
+      const params = new URLSearchParams(urlObj.search);
+
+      if (params.get('_langburp') !== 'true') return;
+
+      const success = params.get('success') === 'true';
+
+      if (success) {
+        setResult({
+          success: true,
+          connectionId: params.get('connectionId') || undefined,
+          connectionUserId: params.get('connectionUserId') || undefined,
+          openAppUrl: params.get('openAppUrl') ? decodeURIComponent(params.get('openAppUrl')!) : undefined,
+          openBrowserUrl: params.get('openBrowserUrl') ? decodeURIComponent(params.get('openBrowserUrl')!) : undefined,
+        });
+      } else {
+        setResult({
+          success: false,
+          error: params.get('error') || 'Connection failed',
+        });
+      }
+    } catch (error) {
+      console.error('Failed to parse URL:', error);
+    }
+  }, [context.currentUrl]);
 
   return {
     integrations,
     isLoading,
     connect,
+    result,
   };
 }; 

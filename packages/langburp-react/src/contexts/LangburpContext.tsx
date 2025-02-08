@@ -6,6 +6,7 @@ export interface LangburpContextType {
   onAuthorize?: (state?: string) => Promise<AuthorizeEndUserSuccessResponseSchema>;
 
   apiBaseUrl?: string;
+  currentUrl?: string;
 }
 
 export const LangburpContext = createContext<LangburpContextType | null>(null);
