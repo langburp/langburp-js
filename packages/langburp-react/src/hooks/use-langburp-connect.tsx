@@ -1,8 +1,8 @@
 import { useContext, useEffect, useMemo, useState } from "react";
-import { LangburpContext } from "../contexts/LangburpContext";
+import { LangburpContext } from "../contexts/langburp-context";
 import { LangburpClient } from "@langburp/langburp-js";
 import { ProviderKinds } from "../utils/provider-metadata";
-import type { LangburpContextType } from "../contexts/LangburpContext";
+import type { LangburpContextType } from "../contexts/langburp-context";
 
 type LangburpConnectResult = {
   success: boolean;

@@ -2,6 +2,7 @@
 
 import { useLangburpConnect } from "@langburp/react";
 import { authorizeEndUserForLangburp } from "./_actions/langburp";
+import { SlackButton } from "@langburp/react";
 
 export default function Home() {
   const { integrations, result, isLoading, connect } = useLangburpConnect({
@@ -12,7 +13,7 @@ export default function Home() {
   });
 
   return (
-    <div className={""}>
+    <div className={""} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
       {!result && (<main className={""}>
         {integrations.map((integration) => (
           <button
@@ -35,6 +36,14 @@ export default function Home() {
         <p>An error occurred while connecting:</p>
         <p>{result.error}</p>
       </main>)}
+
+      <SlackButton
+        onClick={() => connect('slack_app')}
+        iconOnly={false}
+        size="small"
+        colorTheme="aubergine"
+        corners="maximum"
+      />
     </div>
   );
 }

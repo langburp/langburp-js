@@ -1,7 +1,7 @@
 import React from "react";
-import { withMaxAllowedInstancesGuard } from "../utils/useMaxAllowedInstances";
-import { LangburpContext } from "../contexts/LangburpContext";
-import type { LangburpContextType } from "../contexts/LangburpContext";
+import { withMaxAllowedInstancesGuard } from "../utils/use-max-allowed-instances";
+import { LangburpContext } from "../contexts/langburp-context";
+import type { LangburpContextType } from "../contexts/langburp-context";
 
 interface LangburpProviderProps extends LangburpContextType {
   children: React.ReactNode;

@@ -1,1 +1,1 @@
-export * from "./LangburpProvider";
+export * from "./langburp-provider";

@@ -1,1 +1,1 @@
-export * from "./useLangburpConnect";
+export * from "./use-langburp-connect";
