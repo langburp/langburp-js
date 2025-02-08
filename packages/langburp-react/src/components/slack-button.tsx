@@ -1,20 +1,16 @@
 import React from 'react';
+import { AppBaseButton, AppBaseButtonProps } from './app-base-button';
 
-export interface SlackButtonProps {
-  iconOnly?: boolean;
-  size?: 'small' | 'default' | 'large';
-  colorTheme?: 'light' | 'aubergine';
-  corners?: 'default' | 'maximum';
-  onClick?: () => void;
-  className?: string;
-  style?: React.CSSProperties;
+export interface SlackButtonProps extends Omit<AppBaseButtonProps, 'children'> {
+  colorTheme?: 'light' | 'aubergine' | 'dark';
   iconClassName?: string;
   iconStyle?: React.CSSProperties;
+  text?: string;
 }
 
 export const SlackButton: React.FC<SlackButtonProps> = ({
   iconOnly = false,
-  size = 'small',
+  size = 'default',
   colorTheme = 'light',
   corners = 'default',
   onClick,
@@ -22,37 +18,14 @@ export const SlackButton: React.FC<SlackButtonProps> = ({
   style,
   iconClassName,
   iconStyle,
+  text = 'Add to Slack',
 }) => {
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'small':
-        return { height: '44px', width: iconOnly ? '44px' : '204px', fontSize: '14px' };
-      case 'large':
-        return { height: '56px', width: iconOnly ? '56px' : '276px', fontSize: '18px' };
-      default:
-        return { height: '48px', width: iconOnly ? '48px' : '236px', fontSize: '16px' };
-    }
-  };
-
   const getThemeStyles = () => {
     return colorTheme === 'light'
       ? { backgroundColor: '#fff', color: '#000', borderColor: '#ddd' }
-      : { backgroundColor: '#4A154B', color: '#fff', borderColor: '#4A154B' };
-  };
-
-  const baseStyles: React.CSSProperties = {
-    alignItems: 'center',
-    border: '1px solid',
-    borderRadius: corners === 'default' ? '4px' : '56px',
-    display: 'inline-flex',
-    fontFamily: 'Lato, sans-serif',
-    fontWeight: 600,
-    justifyContent: 'center',
-    textDecoration: 'none',
-    cursor: 'pointer',
-    ...getSizeStyles(),
-    ...getThemeStyles(),
-    ...style,
+      : colorTheme === 'dark'
+        ? { backgroundColor: '#292929', color: '#fff', borderColor: '#616161' }
+        : { backgroundColor: '#4A154B', color: '#fff', borderColor: '#4A154B' };
   };
 
   const SlackIcon = () => (
@@ -75,9 +48,16 @@ export const SlackButton: React.FC<SlackButtonProps> = ({
   );
 
   return (
-    <button onClick={onClick} style={baseStyles} className={className}>
+    <AppBaseButton
+      onClick={onClick}
+      style={{ ...getThemeStyles(), ...style }}
+      className={className}
+      size={size}
+      corners={corners}
+      iconOnly={iconOnly}
+    >
       <SlackIcon />
-      {!iconOnly && 'Add to Slack'}
-    </button>
+      {!iconOnly && text}
+    </AppBaseButton>
   );
 };

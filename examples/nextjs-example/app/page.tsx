@@ -2,7 +2,7 @@
 
 import { useLangburpConnect } from "@langburp/react";
 import { authorizeEndUserForLangburp } from "./_actions/langburp";
-import { SlackButton } from "@langburp/react";
+import { SlackButton, MsTeamsButton } from "@langburp/react";
 
 export default function Home() {
   const { integrations, result, isLoading, connect } = useLangburpConnect({
@@ -36,13 +36,27 @@ export default function Home() {
         <p>An error occurred while connecting:</p>
         <p>{result.error}</p>
       </main>)}
+      
+      <br/>
+      <br/>
 
       <SlackButton
         onClick={() => connect('slack_app')}
         iconOnly={false}
-        size="small"
-        colorTheme="aubergine"
-        corners="maximum"
+        size="default"
+        colorTheme="dark"
+        corners="default"
+      />
+
+      <br/>
+      <br/>
+
+      <MsTeamsButton
+        onClick={() => connect('ms_teams_app')}
+        iconOnly={false}
+        size="default"
+        colorTheme="dark"
+        corners="default"
       />
     </div>
   );
