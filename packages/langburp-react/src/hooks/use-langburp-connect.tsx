@@ -30,6 +30,8 @@ export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) =>
   }), [context.apiBaseUrl, context.publicApiKey]);
 
   const [integrations, setIntegrations] = useState<Awaited<ReturnType<typeof apiClient.connect.getAvailableIntegrations>>['integrations']>([]);
+  const [slackIntegration, setSlackIntegration] = useState<Awaited<ReturnType<typeof apiClient.connect.getAvailableIntegrations>>['integrations'][number] | null>(null);
+  const [msTeamsIntegration, setMsTeamsIntegration] = useState<Awaited<ReturnType<typeof apiClient.connect.getAvailableIntegrations>>['integrations'][number] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [result, setResult] = useState<LangburpConnectResult>(null);
 
@@ -90,6 +92,8 @@ export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) =>
         const { integrations } = await apiClient.connect.getAvailableIntegrations()
 
         setIntegrations(integrations)
+        setSlackIntegration(integrations.find(integration => integration.provider === ProviderKinds.SlackApp) ?? null)
+        setMsTeamsIntegration(integrations.find(integration => integration.provider === ProviderKinds.MsTeamsApp) ?? null)
       } catch (error) {
         console.error(error);
         throw new Error('Failed to load integrations. Please refresh the page.')
@@ -132,6 +136,8 @@ export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) =>
 
   return {
     integrations,
+    slackIntegration,
+    msTeamsIntegration,
     isLoading,
     connect,
     result,

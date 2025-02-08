@@ -16,7 +16,7 @@ export default function Home() {
     teamsColorTheme: 'light'
   });
 
-  const { integrations, result, isLoading, connect } = useLangburpConnect({
+  const { slackIntegration, msTeamsIntegration, result, connect } = useLangburpConnect({
     onAuthorize: async (state) => {
       const res = await authorizeEndUserForLangburp(state);
       return res;
@@ -45,21 +45,29 @@ export default function Home() {
             <p>{result.error}</p>
           </div>)}
 
-          <SlackButton
+          {slackIntegration && (<SlackButton
             onClick={connect}
             iconOnly={buttonConfig.iconOnly}
             size={buttonConfig.size}
             colorTheme={buttonConfig.slackColorTheme}
             corners={buttonConfig.corners}
-          />
+          />)}
 
-          <MsTeamsButton
+          {msTeamsIntegration && (<MsTeamsButton
             onClick={connect}
             iconOnly={buttonConfig.iconOnly}
             size={buttonConfig.size}
             colorTheme={buttonConfig.teamsColorTheme}
             corners={buttonConfig.corners}
-          />
+          />)}
+
+          {!slackIntegration && !msTeamsIntegration && (<div className={""}>
+            <p>No integrations found. Please check your Langburp project to make sure you have at least one integration configured and in the "Ready" state.</p>
+
+            <br />
+            <br />
+            <p>To learn how to get started, please refer to the <a href="https://langburp.com/docs" target="_blank" rel="noopener noreferrer" style={{ color: '#0070f3', textDecoration: 'underline', fontWeight: 500 }}>Langburp docs</a>.</p>
+          </div>)}
         </div>
       </div>
     </div>
