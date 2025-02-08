@@ -5,7 +5,8 @@ import { CSSProperties, ReactNode } from "react";
 export interface AppBaseButtonProps {
   children: ReactNode;
   className?: string;
-  onClick?: () => void;
+  providerKind: string;
+  onClick?: (providerKind: string) => void | Promise<void>;
   style?: CSSProperties;
   size?: 'small' | 'default' | 'large';
   corners?: 'default' | 'maximum';
@@ -31,6 +32,7 @@ export const AppBaseButton = ({
   size = 'default',
   corners = 'default',
   iconOnly = false,
+  providerKind,
 }: AppBaseButtonProps) => {
   const baseStyles: CSSProperties = {
     alignItems: 'center',
@@ -47,7 +49,7 @@ export const AppBaseButton = ({
   };
 
   return (
-    <button onClick={onClick} style={baseStyles} className={className}>
+    <button onClick={() => onClick?.(providerKind)} style={baseStyles} className={className}>
       {children}
     </button>
   );

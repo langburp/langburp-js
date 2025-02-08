@@ -3,8 +3,19 @@
 import { useLangburpConnect } from "@langburp/react";
 import { authorizeEndUserForLangburp } from "./_actions/langburp";
 import { SlackButton, MsTeamsButton } from "@langburp/react";
+import { ButtonConfigurator, type ButtonConfig } from "./components/ButtonConfigurator";
+import { useState } from "react";
+import styles from './styles/Home.module.css';
 
 export default function Home() {
+  const [buttonConfig, setButtonConfig] = useState<ButtonConfig>({
+    iconOnly: false,
+    size: 'default',
+    corners: 'default',
+    slackColorTheme: 'light',
+    teamsColorTheme: 'light'
+  });
+
   const { integrations, result, isLoading, connect } = useLangburpConnect({
     onAuthorize: async (state) => {
       const res = await authorizeEndUserForLangburp(state);
@@ -13,51 +24,44 @@ export default function Home() {
   });
 
   return (
-    <div className={""} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-      {!result && (<main className={""}>
-        {integrations.map((integration) => (
-          <button
-            key={integration.id}
-            className={""}
-            onClick={() => connect(integration.id)}
-          >
-            Connect {integration.provider}
-          </button>
-        ))}
-      </main>)}
-      {result && result.success && (<main className={""}>
-        <p>Connection successful</p>
-        <p>Connection ID: {result.connectionId}</p>
-        <p>Connection User ID: {result.connectionUserId}</p>
-        <p>Open App URL: {result.openAppUrl}</p>
-        <p>Open Browser URL: {result.openBrowserUrl}</p>
-      </main>)}
-      {result && !result.success && (<main className={""}>
-        <p>An error occurred while connecting:</p>
-        <p>{result.error}</p>
-      </main>)}
-      
-      <br/>
-      <br/>
+    <div className={styles.container}>
+      <div className={styles.configLayout}>
+        <ButtonConfigurator
+          config={buttonConfig}
+          onChange={setButtonConfig}
+        />
 
-      <SlackButton
-        onClick={() => connect('slack_app')}
-        iconOnly={false}
-        size="default"
-        colorTheme="dark"
-        corners="default"
-      />
+        <div className={styles.buttonContainer}>
+          {result && result.success && (<div className={""}>
+            <p>Connection successful</p>
+            <p>Connection ID: {result.connectionId}</p>
+            <p>Connection User ID: {result.connectionUserId}</p>
+            <p>Open App URL: {result.openAppUrl}</p>
+            <p>Open Browser URL: {result.openBrowserUrl}</p>
+          </div>)}
 
-      <br/>
-      <br/>
+          {result && !result.success && (<div className={""}>
+            <p>An error occurred while connecting:</p>
+            <p>{result.error}</p>
+          </div>)}
 
-      <MsTeamsButton
-        onClick={() => connect('ms_teams_app')}
-        iconOnly={false}
-        size="default"
-        colorTheme="dark"
-        corners="default"
-      />
+          <SlackButton
+            onClick={connect}
+            iconOnly={buttonConfig.iconOnly}
+            size={buttonConfig.size}
+            colorTheme={buttonConfig.slackColorTheme}
+            corners={buttonConfig.corners}
+          />
+
+          <MsTeamsButton
+            onClick={connect}
+            iconOnly={buttonConfig.iconOnly}
+            size={buttonConfig.size}
+            colorTheme={buttonConfig.teamsColorTheme}
+            corners={buttonConfig.corners}
+          />
+        </div>
+      </div>
     </div>
   );
 }
