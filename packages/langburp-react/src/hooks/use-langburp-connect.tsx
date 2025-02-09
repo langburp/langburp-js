@@ -24,16 +24,18 @@ export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) =>
     ...hookContext,
   }), [contextFromProvider, hookContext]);
 
-  const apiClient = useMemo(() => new LangburpClient({
-    apiBaseUrl: context.apiBaseUrl,
-    publicApiKey: context.publicApiKey,
-  }), [context.apiBaseUrl, context.publicApiKey]);
-
   const [integrations, setIntegrations] = useState<Awaited<ReturnType<typeof apiClient.connect.getAvailableIntegrations>>['integrations']>([]);
   const [slackIntegration, setSlackIntegration] = useState<Awaited<ReturnType<typeof apiClient.connect.getAvailableIntegrations>>['integrations'][number] | null>(null);
   const [msTeamsIntegration, setMsTeamsIntegration] = useState<Awaited<ReturnType<typeof apiClient.connect.getAvailableIntegrations>>['integrations'][number] | null>(null);
+  const [endUserToken, setEndUserToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [result, setResult] = useState<LangburpConnectResult>(null);
+
+  const apiClient = useMemo(() => new LangburpClient({
+    apiBaseUrl: context.apiBaseUrl,
+    publicApiKey: context.publicApiKey,
+    endUserToken: endUserToken ? endUserToken : undefined,
+  }), [context.apiBaseUrl, context.publicApiKey, endUserToken]);
 
   const currentUrl = typeof window !== 'undefined' ? window.location.href : null;
 
@@ -86,23 +88,49 @@ export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) =>
     }
   }
 
-  useEffect(() => {
-    const fetchIntegrations = async () => {
-      try {
-        const { integrations } = await apiClient.connect.getAvailableIntegrations()
+  const fetchIntegrations = async () => {
+    try {
+      const { integrations } = await apiClient.connect.getAvailableIntegrations()
 
-        setIntegrations(integrations)
-        setSlackIntegration(integrations.find(integration => integration.provider === ProviderKinds.SlackApp) ?? null)
-        setMsTeamsIntegration(integrations.find(integration => integration.provider === ProviderKinds.MsTeamsApp) ?? null)
-      } catch (error) {
-        console.error(error);
-        throw new Error('Failed to load integrations. Please refresh the page.')
-      } finally {
-        setIsLoading(false);
-      }
+      setIntegrations(integrations)
+      setSlackIntegration(integrations.find(integration => integration.provider === ProviderKinds.SlackApp) ?? null)
+      setMsTeamsIntegration(integrations.find(integration => integration.provider === ProviderKinds.MsTeamsApp) ?? null)
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to load integrations. Please refresh the page.')
+    } finally {
+      setIsLoading(false);
     }
+  }
+
+  const fetchEndUserToken = async () => {
+    try {
+      const { state } = await mustAuthorizeEndUser()
+      if (!state) {
+        throw new Error('Failed to generate end user token')
+      }
+      const { token } = await apiClient.connect.generateEndUserToken({
+        generateEndUserTokenRequestSchema: {
+          state,
+        }
+      })
+      setEndUserToken(token)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    console.log('fetching integrations')
     fetchIntegrations()
-  }, [])
+  }, [endUserToken])
+
+  useEffect(() => {
+    if (!endUserToken && context.onAuthorize) {
+      console.log('fetching end user token')
+      fetchEndUserToken()
+    }
+  }, [endUserToken, context.onAuthorize])
 
   useEffect(() => {
     if (!currentUrl) return;
@@ -142,4 +170,4 @@ export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) =>
     connect,
     result,
   };
-}; 
+};

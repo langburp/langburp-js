@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://api.langburp.com"
+      "url": "https://api.langburp.com"
     }
   ],
   "components": {
@@ -21,6 +21,11 @@
         "type": "apiKey",
         "in": "header",
         "name": "x-secret-key"
+      },
+      "endUserTokenAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-end-user-token"
       }
     },
     "schemas": {
@@ -591,6 +596,30 @@
         "required": [
           "redirectUrl"
         ]
+      },
+      "GenerateEndUserTokenResponseSchema": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyX2lkXzEyMyJ9.1234567890"
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "GenerateEndUserTokenRequestSchema": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "example": "auth_state_123"
+          }
+        },
+        "required": [
+          "state"
+        ]
       }
     },
     "parameters": {}
@@ -1079,11 +1108,15 @@
           "connect"
         ],
         "operationId": "getAvailableIntegrations",
-        "description": "Get available integrations that are ready to accept connections",
+        "description": "Get available integrations that are ready to accept connections. If an end user token is provided, additional information about connection status is returned.",
         "summary": "Get available integrations",
         "security": [
           {
             "apiKeyAuth": []
+          },
+          {
+            "apiKeyAuth": [],
+            "endUserTokenAuth": []
           }
         ],
         "responses": {
@@ -1110,13 +1143,17 @@
                           },
                           "status": {
                             "type": "string"
+                          },
+                          "isUserConnected": {
+                            "type": "boolean"
                           }
                         },
                         "required": [
                           "id",
                           "provider",
                           "name",
-                          "status"
+                          "status",
+                          "isUserConnected"
                         ]
                       }
                     }
@@ -1254,6 +1291,86 @@
                   "type": "object",
                   "properties": {
                     "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/connect/end-user-token": {
+      "post": {
+        "tags": [
+          "connect"
+        ],
+        "operationId": "generateEndUserToken",
+        "description": "Generate an end user token from a valid authorization state",
+        "summary": "Generate end user token",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Token generation request parameters",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateEndUserTokenRequestSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateEndUserTokenResponseSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "debug": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized or invalid state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "debug": {
                       "type": "string"
                     }
                   },

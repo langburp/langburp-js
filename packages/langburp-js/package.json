@@ -12,11 +12,12 @@
     "lib"
   ],
   "scripts": {
-    "codegen": "rm -rf ./src/langburpapi_client && openapi-generator-cli generate -i openapi-v3.1.0.json -g typescript-fetch -o ./src/langburpapi_client --additional-properties=useSingleRequestParameter=true,withSeparateModelsAndApi=true,apiPackage=server,modelPackage=model --openapi-normalizer REFACTOR_ALLOF_WITH_PROPERTIES_ONLY=true",
+    "codegen": "rm -rf ./src/langburpapi_client && openapi-generator-cli generate -i openapi-v3.1.0.json -g typescript-fetch -o ./src/langburpapi_client --additional-properties=useSingleRequestParameter=true,withSeparateModelsAndApi=true,apiPackage=server,modelPackage=model --openapi-normalizer REFACTOR_ALLOF_WITH_PROPERTIES_ONLY=true && npm run post-generate",
     "build": "tsup src/index.ts --out-dir lib --dts --format cjs,esm --tsconfig tsconfig.json --no-splitting",
     "dev": "tsup src/index.ts --out-dir lib --dts --format cjs,esm --tsconfig tsconfig.json --no-splitting --watch",
     "lint": "eslint . --max-warnings 0",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "post-generate": "ts-node scripts/post-generate.ts"
   },
   "keywords": [
     "langburp",

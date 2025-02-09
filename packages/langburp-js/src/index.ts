@@ -7,6 +7,7 @@ export { ApiClient };
 export type LangburpClientParams = {
   publicApiKey: string;
   secretApiKey?: string;
+  endUserToken?: string;
 
   apiBaseUrl?: string;
 }
@@ -31,6 +32,12 @@ export class LangburpClient {
             throw new Error("Secret API key is not set, but is required for this operation");
           }
           return params.secretApiKey;
+        }
+        if (name === "x-end-user-token") {
+          if (!params.endUserToken) {
+            throw new Error("End user token is not set, but is required for this operation");
+          }
+          return params.endUserToken;
         }
         throw new Error(`Invalid API key name requested by client: ${name}`);
       },

@@ -3,7 +3,7 @@
 import { useLangburpConnect } from "@langburp/react";
 import { authorizeEndUserForLangburp } from "./_actions/langburp";
 import { SlackButton, MsTeamsButton } from "@langburp/react";
-import { ButtonConfigurator, type ButtonConfig } from "./components/ButtonConfigurator";
+import { ButtonConfigurator, type ButtonConfig } from "./components/button-configurator";
 import { useState } from "react";
 import styles from './styles/Home.module.css';
 
@@ -16,7 +16,7 @@ export default function Home() {
     teamsColorTheme: 'light'
   });
 
-  const { slackIntegration, msTeamsIntegration, result, connect } = useLangburpConnect({
+  const { isLoading, slackIntegration, msTeamsIntegration, result, connect } = useLangburpConnect({
     onAuthorize: async (state) => {
       const res = await authorizeEndUserForLangburp(state);
       return res;
@@ -45,6 +45,14 @@ export default function Home() {
             <p>{result.error}</p>
           </div>)}
 
+          {slackIntegration && slackIntegration.isUserConnected && (<div className={""}>
+            <p>Slack is connected 🎉</p>
+          </div>)}
+
+          {msTeamsIntegration && msTeamsIntegration.isUserConnected && (<div className={""}>
+            <p>Microsoft Teams is connected 🎉</p>
+          </div>)}
+
           {slackIntegration && (<SlackButton
             onClick={connect}
             iconOnly={buttonConfig.iconOnly}
@@ -61,12 +69,16 @@ export default function Home() {
             corners={buttonConfig.corners}
           />)}
 
-          {!slackIntegration && !msTeamsIntegration && (<div className={""}>
+          {!slackIntegration && !msTeamsIntegration && !isLoading && (<div className={""}>
             <p>No integrations found. Please check your Langburp project to make sure you have at least one integration configured and in the "Ready" state.</p>
 
             <br />
             <br />
             <p>To learn how to get started, please refer to the <a href="https://langburp.com/docs" target="_blank" rel="noopener noreferrer" style={{ color: '#0070f3', textDecoration: 'underline', fontWeight: 500 }}>Langburp docs</a>.</p>
+          </div>)}
+
+          {isLoading && (<div className={""}>
+            <p>Loading...</p>
           </div>)}
         </div>
       </div>
