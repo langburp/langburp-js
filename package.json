@@ -9,7 +9,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "codegen": "turbo run codegen",
     "changeset": "changeset",
-    "publish-packages": "turbo run codegen build && changeset version && changeset publish"
+    "publish-packages": "turbo run codegen && turbo run build && changeset version && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "2.27.12",
