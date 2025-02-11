@@ -1,13 +1,33 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const connectApiPath = path.join(__dirname, '../src/langburpapi_client/apis/ConnectApi.ts');
+interface CodeReplacement {
+    original: string;
+    replacement: string;
+    description: string;
+}
 
-try {
-    let content = fs.readFileSync(connectApiPath, 'utf8');
+function replaceCodeInFile(filePath: string, replacements: CodeReplacement[]): void {
+    try {
+        let content = fs.readFileSync(filePath, 'utf8');
 
-    // Define the code block we want to replace
-    const codeToReplace = `    async getAvailableIntegrationsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAvailableIntegrations200Response>> {
+        for (const { original, replacement, description } of replacements) {
+            if (!content.includes(original)) {
+                throw new Error(`Could not find the code block to replace: ${description}`);
+            }
+            content = content.replace(original, replacement);
+            console.log(`Successfully updated ${description}`);
+        }
+
+        fs.writeFileSync(filePath, content, 'utf8');
+    } catch (error) {
+        console.error(`Error processing ${path.basename(filePath)}:`, error);
+        process.exit(1);
+    }
+}
+
+const connectApiReplacements: CodeReplacement[] = [{
+    original: `    async getAvailableIntegrationsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAvailableIntegrations200Response>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -28,10 +48,8 @@ try {
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => GetAvailableIntegrations200ResponseFromJSON(jsonValue));
-    }`;
-
-    // Define the replacement code
-    const replacementCode = `    async getAvailableIntegrationsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAvailableIntegrations200Response>> {
+    }`,
+    replacement: `    async getAvailableIntegrationsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAvailableIntegrations200Response>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -56,22 +74,9 @@ try {
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => GetAvailableIntegrations200ResponseFromJSON(jsonValue));
-    }`;
+    }`,
+    description: 'getAvailableIntegrationsRaw in ConnectApi.ts'
+}];
 
-    // Check if the code exists in the file
-    if (!content.includes(codeToReplace)) {
-        throw new Error('Could not find the code block to replace in ConnectApi.ts');
-    }
-
-    // Replace the code
-    const updatedContent = content.replace(codeToReplace, replacementCode);
-
-    // Write the file back
-    fs.writeFileSync(connectApiPath, updatedContent, 'utf8');
-
-    console.log('Successfully updated getAvailableIntegrationsRaw in ConnectApi.ts');
-
-} catch (error) {
-    console.error('Error processing ConnectApi.ts:', error);
-    process.exit(1);
-}
+const connectApiPath = path.join(__dirname, '../src/langburpapi_client/apis/ConnectApi.ts');
+replaceCodeInFile(connectApiPath, connectApiReplacements);

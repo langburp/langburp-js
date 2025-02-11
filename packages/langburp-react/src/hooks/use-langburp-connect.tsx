@@ -121,13 +121,11 @@ export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) =>
   }
 
   useEffect(() => {
-    console.log('fetching integrations')
     fetchIntegrations()
   }, [endUserToken])
 
   useEffect(() => {
     if (!endUserToken && context.onAuthorize) {
-      console.log('fetching end user token')
       fetchEndUserToken()
     }
   }, [endUserToken, context.onAuthorize])

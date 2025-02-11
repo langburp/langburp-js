@@ -3,58 +3,138 @@ import type {
   WebhookSlashCommandReceivedBodySchema,
   WebhookConnectionConnectedBodySchema,
   WebhookConnectionUserConnectedBodySchema,
-  WebhookRequestBodySchema
+  WebhookRequestBodySchema,
+  LangburpClientParams,
 } from "@langburp/langburp-js";
+import { LangburpClient } from "@langburp/langburp-js";
+import { isVerifiedLangburpWebhook, LangburpWebhookVerificationHeaders } from "./verify-webhook";
 
-import { verifyLangburpWebhook } from "./verify-webhook";
+type HandlerMessageRespondFn = (message: string | { message: { text: string } }) => Promise<void>;
 
-export type WebhookHandlers = {
-  onMessage?: (event: WebhookMessageReceivedBodySchema) => Promise<void> | void;
-  onSlashCommand?: (event: WebhookSlashCommandReceivedBodySchema) => Promise<void> | void;
-  onConnectionConnected?: (event: WebhookConnectionConnectedBodySchema) => Promise<void> | void;
-  onConnectionUserConnected?: (event: WebhookConnectionUserConnectedBodySchema) => Promise<void> | void;
-};
+type HandlerArgs = {
+  client: LangburpClient;
+}
 
-export class LangburpWebhook {
-  private handlers: WebhookHandlers;
+type MessageHandlerArgs = {
+  respond: HandlerMessageRespondFn;
+} & HandlerArgs & WebhookMessageReceivedBodySchema
 
-  constructor(handlers: WebhookHandlers) {
-    this.handlers = handlers;
+type MessageHandler = (body: MessageHandlerArgs) => Promise<void>;
+
+type SlashCommandHandler = (body: WebhookSlashCommandReceivedBodySchema) => Promise<void>;
+
+type ConnectionHandler = (body: WebhookConnectionConnectedBodySchema) => Promise<void>;
+
+type ConnectionUserHandler = (body: WebhookConnectionUserConnectedBodySchema) => Promise<void>;
+
+export class LangburpWebhookResponder {
+  private client: LangburpClient;
+  private secretApiKey: string;
+  private publicApiKey: string;
+  private messageHandlers: Array<{ pattern: string | RegExp; handler: MessageHandler }> = [];
+  private commandHandlers: Array<{ pattern: string | RegExp; handler: SlashCommandHandler }> = [];
+  private connectionHandlers: ConnectionHandler[] = [];
+  private connectionUserHandlers: ConnectionUserHandler[] = [];
+
+  constructor(params: LangburpClientParams) {
+    if (!params.secretApiKey) {
+      throw new Error("secretApiKey is required");
+    }
+    if (!params.publicApiKey) {
+      throw new Error("publicApiKey is required");
+    }
+    this.secretApiKey = params.secretApiKey;
+    this.publicApiKey = params.publicApiKey;
+    this.client = new LangburpClient(params);
   }
 
-  async handleWebhook(body: WebhookRequestBodySchema): Promise<void> {
+  // Message listener
+  message(pattern: string | RegExp, handler: MessageHandler): this {
+    this.messageHandlers.push({ pattern, handler });
+    return this;
+  }
+
+  // Slash command listener
+  command(pattern: string | RegExp, handler: SlashCommandHandler): this {
+    this.commandHandlers.push({ pattern, handler });
+    return this;
+  }
+
+  // Connection listener
+  connection(handler: ConnectionHandler): this {
+    this.connectionHandlers.push(handler);
+    return this;
+  }
+
+  // Connection user listener
+  connectionUser(handler: ConnectionUserHandler): this {
+    this.connectionUserHandlers.push(handler);
+    return this;
+  }
+
+  async handle({
+    rawBody,
+    headers
+  }: {
+    rawBody: string;
+    headers: LangburpWebhookVerificationHeaders;
+  }): Promise<Promise<void>[]> {
+    const body = JSON.parse(rawBody) as WebhookRequestBodySchema;
+    if (!isVerifiedLangburpWebhook({
+      signingSecret: this.secretApiKey,
+      body: rawBody,
+      headers
+    })) {
+      throw new Error("Invalid webhook signature");
+    }
+    return this.processVerifiedWebhook(body);
+  }
+
+  processVerifiedWebhook(body: WebhookRequestBodySchema): Promise<void>[] {
+    const promises: Promise<void>[] = [];
     switch (body.event) {
       case 'message':
-        if (this.handlers.onMessage) {
-          await this.handlers.onMessage(body);
+        for (const { pattern, handler } of this.messageHandlers) {
+          if (typeof pattern === 'string' ? pattern === body.payload.text : pattern.test(body.payload.text)) {
+            promises.push(handler({
+              ...body,
+              client: this.client,
+              respond: async (message: string | { message: { text: string } }) => {
+                await this.client.webhookCallback(body, typeof message === 'string' ? {
+                  message: {
+                    text: message,
+                  },
+                } : {
+                  message: message.message,
+                });
+              },
+            }));
+          }
         }
         break;
       case 'slash_command':
-        if (this.handlers.onSlashCommand) {
-          await this.handlers.onSlashCommand(body);
+        for (const { pattern, handler } of this.commandHandlers) {
+          if (typeof pattern === 'string' ? pattern === body.payload.command : pattern.test(body.payload.command)) {
+            promises.push(handler(body));
+          }
         }
         break;
       case 'connection.connected':
-        if (this.handlers.onConnectionConnected) {
-          await this.handlers.onConnectionConnected(body);
+        for (const handler of this.connectionHandlers) {
+          promises.push(handler(body));
         }
         break;
       case 'connection_user.connected':
-        if (this.handlers.onConnectionUserConnected) {
-          await this.handlers.onConnectionUserConnected(body);
+        for (const handler of this.connectionUserHandlers) {
+          promises.push(handler(body));
         }
         break;
       default:
-        throw new Error(`Unhandled webhook event: ${(body as any).event}`);
+        throw new Error(`Unknown webhook event: ${(body as any).event}`);
     }
-  }
-
-  static createHandler(handlers: WebhookHandlers) {
-    const webhook = new LangburpWebhook(handlers);
-    return async (body: WebhookRequestBodySchema) => {
-      await webhook.handleWebhook(body);
-    };
+    return promises;
   }
 }
 
-export type * from "@langburp/langburp-js"; 
+export type * from "@langburp/langburp-js";
+export * from "./verify-webhook";

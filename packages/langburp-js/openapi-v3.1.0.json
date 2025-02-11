@@ -60,7 +60,7 @@
               "message"
             ]
           },
-          "eventPayload": {
+          "payload": {
             "type": "object",
             "properties": {
               "text": {
@@ -153,7 +153,7 @@
         },
         "required": [
           "event",
-          "eventPayload",
+          "payload",
           "project",
           "integration",
           "connection",
@@ -170,7 +170,7 @@
               "slash_command"
             ]
           },
-          "eventPayload": {
+          "payload": {
             "type": "object",
             "properties": {
               "command": {
@@ -267,7 +267,7 @@
         },
         "required": [
           "event",
-          "eventPayload",
+          "payload",
           "project",
           "integration",
           "connection",
@@ -284,7 +284,7 @@
               "connection.connected"
             ]
           },
-          "eventPayload": {
+          "payload": {
             "type": "object",
             "properties": {
               "connectionId": {
@@ -374,7 +374,7 @@
         },
         "required": [
           "event",
-          "eventPayload",
+          "payload",
           "project",
           "integration",
           "connection",
@@ -391,7 +391,7 @@
               "connection_user.connected"
             ]
           },
-          "eventPayload": {
+          "payload": {
             "type": "object",
             "properties": {
               "connectionId": {
@@ -485,7 +485,7 @@
         },
         "required": [
           "event",
-          "eventPayload",
+          "payload",
           "project",
           "integration",
           "connection",
@@ -1371,6 +1371,145 @@
                       "type": "string"
                     },
                     "debug": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/connections/{connectionId}/callback": {
+      "post": {
+        "tags": [
+          "webhook-callback"
+        ],
+        "operationId": "webhookCallback",
+        "description": "Handle webhook callback for a specific connection",
+        "summary": "Process webhook callback",
+        "security": [
+          {
+            "apiKeyAuth": [],
+            "secretApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "ID of the connection to handle events for"
+            },
+            "required": true,
+            "description": "ID of the connection to handle events for",
+            "name": "connectionId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Base64 encoded JSON context for the event callback"
+            },
+            "required": true,
+            "description": "Base64 encoded JSON context for the event callback",
+            "name": "x-webhook-callback-context",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "monolithic.v1",
+                "chunked.v1"
+              ],
+              "description": "Request type for the event callback"
+            },
+            "required": false,
+            "description": "Request type for the event callback",
+            "name": "x-webhook-response-type",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "description": "Event callback payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "description": "Dynamic event payload structure"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Event callback processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or missing/invalid context header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Connection not found or not accessible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to process event callback",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
                       "type": "string"
                     }
                   },

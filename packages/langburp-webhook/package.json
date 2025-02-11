@@ -41,8 +41,7 @@
     "@types/tsscmp": "1.0.2",
     "typescript": "5.7.3",
     "tsc": "^2.0.4",
-    "tsup": "^8.2.4",
-    "tsscmp": "1.0.6"
+    "tsup": "^8.2.4"
   },
   "dependencies": {
     "@langburp/langburp-js": "*"
