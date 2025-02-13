@@ -1,5 +1,13 @@
 # @langburp/webhook
 
+## 0.0.4
+
+### Patch Changes
+
+- 80284e8: accept IncomingHttpHeaders type for wh verification headers
+- Updated dependencies [80284e8]
+  - @langburp/langburp-js@0.0.4
+
 ## 0.0.3
 
 ### Patch Changes

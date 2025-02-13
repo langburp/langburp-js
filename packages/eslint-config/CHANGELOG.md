@@ -1,5 +1,11 @@
 # @repo/eslint-config
 
+## 0.0.3
+
+### Patch Changes
+
+- 80284e8: accept IncomingHttpHeaders type for wh verification headers
+
 ## 0.0.2
 
 ### Patch Changes
