@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     });
 
     // Return a 200 response to Langburp to confirm receipt of the webhook
-    return NextResponse.json({ message: 'Webhook processed successfully' }, { status: 200 });
+    return NextResponse.json({ message: 'ok' }, { status: 200 });
   } catch (error) {
     console.error('Error processing webhook:', error);
 

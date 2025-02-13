@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import type { IncomingHttpHeaders } from 'node:http';
 
 const verifyErrorPrefix = 'Failed to verify webhook authenticity';
 
@@ -8,7 +9,7 @@ export type LangburpWebhookVerificationHeaders = {
   'x-webhook-version'?: string;
 } | {
   get(name: string): string | null | undefined;
-};
+} | IncomingHttpHeaders;
 
 export interface LangburpWebhookVerificationOptions {
   signingSecret: string;
@@ -22,9 +23,33 @@ export interface LangburpWebhookVerificationOptions {
  * If the webhook is invalid, this method throws an exception with the error details.
  */
 export function mustVerifyLangburpWebhook(options: LangburpWebhookVerificationOptions): void {
-  const timestamp = 'get' in options.headers ? options.headers.get('x-webhook-timestamp') : options.headers['x-webhook-timestamp'];
-  const signature = 'get' in options.headers ? options.headers.get('x-webhook-signature') : options.headers['x-webhook-signature'];
-  const version = 'get' in options.headers ? options.headers.get('x-webhook-version') : options.headers['x-webhook-version'];
+  if (!options.headers) {
+    throw new Error(`${verifyErrorPrefix}: headers are required`);
+  }
+
+  const timestamp = ('get' in options.headers && typeof options.headers.get === 'function')
+    ? options.headers.get('x-webhook-timestamp')
+    : ('x-webhook-timestamp' in options.headers)
+      ? Array.isArray(options.headers['x-webhook-timestamp'])
+        ? options.headers['x-webhook-timestamp'][0]
+        : options.headers['x-webhook-timestamp']
+      : undefined;
+      
+  const signature = ('get' in options.headers && typeof options.headers.get === 'function')
+    ? options.headers.get('x-webhook-signature')
+    : ('x-webhook-signature' in options.headers)
+      ? Array.isArray(options.headers['x-webhook-signature'])
+        ? options.headers['x-webhook-signature'][0]
+        : options.headers['x-webhook-signature']
+      : undefined;
+      
+  const version = ('get' in options.headers && typeof options.headers.get === 'function')
+    ? options.headers.get('x-webhook-version')
+    : ('x-webhook-version' in options.headers)
+      ? Array.isArray(options.headers['x-webhook-version'])
+        ? options.headers['x-webhook-version'][0]
+        : options.headers['x-webhook-version']
+      : undefined;
 
   if (!timestamp || !signature || !version) {
     throw new Error(`${verifyErrorPrefix}: missing required headers`);
