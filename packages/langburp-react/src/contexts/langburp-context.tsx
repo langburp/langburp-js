@@ -1,9 +1,9 @@
 import { createContext } from "react";
-import type { AuthorizeEndUserSuccessResponseSchema } from "@langburp/langburp-js";
+import type { AuthorizeEndUserSuccessResponse } from "@langburp/langburp-js";
 
 export interface LangburpContextType {
   publicApiKey: string;
-  onAuthorize?: (state?: string) => Promise<AuthorizeEndUserSuccessResponseSchema>;
+  onAuthorize?: (state?: string) => Promise<AuthorizeEndUserSuccessResponse>;
 
   apiBaseUrl?: string;
 }

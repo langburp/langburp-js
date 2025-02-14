@@ -67,7 +67,7 @@ export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) =>
       }
       const connectResp = await apiClient.connect.connectIntegration({
         integrationId: integrationId,
-        connectIntegrationSchema: {
+        connectIntegrationRequestBody: {
           ...authResp,
           redirectUrl: window.location.href
         }
@@ -110,7 +110,7 @@ export const useLangburpConnect = (hookContext: Partial<LangburpContextType>) =>
         throw new Error('Failed to generate end user token')
       }
       const { token } = await apiClient.connect.generateEndUserToken({
-        generateEndUserTokenRequestSchema: {
+        generateEndUserTokenRequestBody: {
           state,
         }
       })

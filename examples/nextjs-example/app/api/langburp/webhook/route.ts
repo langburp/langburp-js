@@ -13,7 +13,9 @@ export async function POST(request: Request) {
 
   responder.message(/.*/, async ({ payload, respond }) => {
     console.log('Message received:', payload.text);
-    await respond('Hello!');
+    await respond({
+      text: 'Hello!',
+    });
   });
 
   try {

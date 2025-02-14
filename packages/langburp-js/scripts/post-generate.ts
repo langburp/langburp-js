@@ -27,7 +27,7 @@ function replaceCodeInFile(filePath: string, replacements: CodeReplacement[]): v
 }
 
 const connectApiReplacements: CodeReplacement[] = [{
-    original: `    async getAvailableIntegrationsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAvailableIntegrations200Response>> {
+    original: `    async getAvailableIntegrationsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAvailableIntegrationsSuccessResponse>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -47,9 +47,9 @@ const connectApiReplacements: CodeReplacement[] = [{
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GetAvailableIntegrations200ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GetAvailableIntegrationsSuccessResponseFromJSON(jsonValue));
     }`,
-    replacement: `    async getAvailableIntegrationsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAvailableIntegrations200Response>> {
+    replacement: `    async getAvailableIntegrationsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAvailableIntegrationsSuccessResponse>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -73,7 +73,7 @@ const connectApiReplacements: CodeReplacement[] = [{
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GetAvailableIntegrations200ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GetAvailableIntegrationsSuccessResponseFromJSON(jsonValue));
     }`,
     description: 'getAvailableIntegrationsRaw in ConnectApi.ts'
 }];

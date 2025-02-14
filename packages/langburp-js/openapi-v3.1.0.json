@@ -51,7 +51,7 @@
           "name": "ACME Corp"
         }
       },
-      "WebhookMessageReceivedBodySchema": {
+      "WebhookMessageReceivedRequestBody": {
         "type": "object",
         "properties": {
           "event": {
@@ -136,19 +136,6 @@
               "name",
               "metadata"
             ]
-          },
-          "callbackUrl": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "uri"
-          },
-          "callbackContext": {
-            "type": [
-              "string",
-              "null"
-            ]
           }
         },
         "required": [
@@ -156,12 +143,10 @@
           "payload",
           "project",
           "integration",
-          "connection",
-          "callbackUrl",
-          "callbackContext"
+          "connection"
         ]
       },
-      "WebhookSlashCommandReceivedBodySchema": {
+      "WebhookSlashCommandReceivedRequestBody": {
         "type": "object",
         "properties": {
           "event": {
@@ -250,19 +235,6 @@
               "name",
               "metadata"
             ]
-          },
-          "callbackUrl": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "uri"
-          },
-          "callbackContext": {
-            "type": [
-              "string",
-              "null"
-            ]
           }
         },
         "required": [
@@ -270,12 +242,10 @@
           "payload",
           "project",
           "integration",
-          "connection",
-          "callbackUrl",
-          "callbackContext"
+          "connection"
         ]
       },
-      "WebhookConnectionConnectedBodySchema": {
+      "WebhookConnectionConnectedRequestBody": {
         "type": "object",
         "properties": {
           "event": {
@@ -357,19 +327,6 @@
               "name",
               "metadata"
             ]
-          },
-          "callbackUrl": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "uri"
-          },
-          "callbackContext": {
-            "type": [
-              "string",
-              "null"
-            ]
           }
         },
         "required": [
@@ -377,12 +334,10 @@
           "payload",
           "project",
           "integration",
-          "connection",
-          "callbackUrl",
-          "callbackContext"
+          "connection"
         ]
       },
-      "WebhookConnectionUserConnectedBodySchema": {
+      "WebhookConnectionUserConnectedRequestBody": {
         "type": "object",
         "properties": {
           "event": {
@@ -468,19 +423,6 @@
               "name",
               "metadata"
             ]
-          },
-          "callbackUrl": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "uri"
-          },
-          "callbackContext": {
-            "type": [
-              "string",
-              "null"
-            ]
           }
         },
         "required": [
@@ -488,33 +430,31 @@
           "payload",
           "project",
           "integration",
-          "connection",
-          "callbackUrl",
-          "callbackContext"
+          "connection"
         ]
       },
-      "WebhookRequestBodySchema": {
+      "WebhookRequestBody": {
         "oneOf": [
           {
-            "$ref": "#/components/schemas/WebhookMessageReceivedBodySchema"
+            "$ref": "#/components/schemas/WebhookMessageReceivedRequestBody"
           },
           {
-            "$ref": "#/components/schemas/WebhookSlashCommandReceivedBodySchema"
+            "$ref": "#/components/schemas/WebhookSlashCommandReceivedRequestBody"
           },
           {
-            "$ref": "#/components/schemas/WebhookConnectionConnectedBodySchema"
+            "$ref": "#/components/schemas/WebhookConnectionConnectedRequestBody"
           },
           {
-            "$ref": "#/components/schemas/WebhookConnectionUserConnectedBodySchema"
+            "$ref": "#/components/schemas/WebhookConnectionUserConnectedRequestBody"
           }
         ],
         "discriminator": {
           "propertyName": "event",
           "mapping": {
-            "message": "#/components/schemas/WebhookMessageReceivedBodySchema",
-            "slash_command": "#/components/schemas/WebhookSlashCommandReceivedBodySchema",
-            "connection.connected": "#/components/schemas/WebhookConnectionConnectedBodySchema",
-            "connection_user.connected": "#/components/schemas/WebhookConnectionUserConnectedBodySchema"
+            "message": "#/components/schemas/WebhookMessageReceivedRequestBody",
+            "slash_command": "#/components/schemas/WebhookSlashCommandReceivedRequestBody",
+            "connection.connected": "#/components/schemas/WebhookConnectionConnectedRequestBody",
+            "connection_user.connected": "#/components/schemas/WebhookConnectionUserConnectedRequestBody"
           }
         }
       },
@@ -540,7 +480,19 @@
           "name": "Bob Smith"
         }
       },
-      "AuthorizeEndUserSuccessResponseSchema": {
+      "PostMessageRequestBody": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "example": "Hello, world!"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "AuthorizeEndUserSuccessResponse": {
         "type": "object",
         "properties": {
           "state": {
@@ -548,7 +500,7 @@
           }
         }
       },
-      "AuthorizeEndUserErrorResponseSchema": {
+      "AuthorizeEndUserErrorResponse": {
         "type": "object",
         "properties": {
           "error": {
@@ -563,7 +515,7 @@
           "error"
         ]
       },
-      "AuthorizeEndUserSchema": {
+      "AuthorizeEndUserRequestBody": {
         "type": "object",
         "properties": {
           "state": {
@@ -580,7 +532,45 @@
           }
         }
       },
-      "ConnectIntegrationSchema": {
+      "GetAvailableIntegrationsSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "integrations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "provider": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "isUserConnected": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "provider",
+                "name",
+                "status",
+                "isUserConnected"
+              ]
+            }
+          }
+        },
+        "required": [
+          "integrations"
+        ]
+      },
+      "ConnectIntegrationRequestBody": {
         "type": "object",
         "properties": {
           "state": {
@@ -597,7 +587,7 @@
           "redirectUrl"
         ]
       },
-      "GenerateEndUserTokenResponseSchema": {
+      "GenerateEndUserTokenSuccessResponse": {
         "type": "object",
         "properties": {
           "token": {
@@ -609,7 +599,7 @@
           "token"
         ]
       },
-      "GenerateEndUserTokenRequestSchema": {
+      "GenerateEndUserTokenRequestBody": {
         "type": "object",
         "properties": {
           "state": {
@@ -866,16 +856,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "message": {
-                    "type": "string",
-                    "example": "Hello, world!"
-                  }
-                },
-                "required": [
-                  "message"
-                ]
+                "$ref": "#/components/schemas/PostMessageRequestBody"
               }
             }
           }
@@ -950,16 +931,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "message": {
-                    "type": "string",
-                    "example": "Hello, world!"
-                  }
-                },
-                "required": [
-                  "message"
-                ]
+                "$ref": "#/components/schemas/PostMessageRequestBody"
               }
             }
           }
@@ -1073,7 +1045,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AuthorizeEndUserSchema"
+                "$ref": "#/components/schemas/AuthorizeEndUserRequestBody"
               }
             }
           }
@@ -1084,7 +1056,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthorizeEndUserSuccessResponseSchema"
+                  "$ref": "#/components/schemas/AuthorizeEndUserSuccessResponse"
                 }
               }
             }
@@ -1094,7 +1066,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthorizeEndUserErrorResponseSchema"
+                  "$ref": "#/components/schemas/AuthorizeEndUserErrorResponse"
                 }
               }
             }
@@ -1125,42 +1097,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "integrations": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "provider": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          },
-                          "status": {
-                            "type": "string"
-                          },
-                          "isUserConnected": {
-                            "type": "boolean"
-                          }
-                        },
-                        "required": [
-                          "id",
-                          "provider",
-                          "name",
-                          "status",
-                          "isUserConnected"
-                        ]
-                      }
-                    }
-                  },
-                  "required": [
-                    "integrations"
-                  ]
+                  "$ref": "#/components/schemas/GetAvailableIntegrationsSuccessResponse"
                 }
               }
             }
@@ -1215,7 +1152,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConnectIntegrationSchema"
+                "$ref": "#/components/schemas/ConnectIntegrationRequestBody"
               }
             }
           }
@@ -1323,7 +1260,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GenerateEndUserTokenRequestSchema"
+                "$ref": "#/components/schemas/GenerateEndUserTokenRequestBody"
               }
             }
           }
@@ -1334,7 +1271,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenerateEndUserTokenResponseSchema"
+                  "$ref": "#/components/schemas/GenerateEndUserTokenSuccessResponse"
                 }
               }
             }
@@ -1371,145 +1308,6 @@
                       "type": "string"
                     },
                     "debug": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/connections/{connectionId}/callback": {
-      "post": {
-        "tags": [
-          "webhook-callback"
-        ],
-        "operationId": "webhookCallback",
-        "description": "Handle webhook callback for a specific connection",
-        "summary": "Process webhook callback",
-        "security": [
-          {
-            "apiKeyAuth": [],
-            "secretApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "schema": {
-              "type": "string",
-              "description": "ID of the connection to handle events for"
-            },
-            "required": true,
-            "description": "ID of the connection to handle events for",
-            "name": "connectionId",
-            "in": "path"
-          },
-          {
-            "schema": {
-              "type": "string",
-              "description": "Base64 encoded JSON context for the event callback"
-            },
-            "required": true,
-            "description": "Base64 encoded JSON context for the event callback",
-            "name": "x-webhook-callback-context",
-            "in": "header"
-          },
-          {
-            "schema": {
-              "type": "string",
-              "enum": [
-                "monolithic.v1",
-                "chunked.v1"
-              ],
-              "description": "Request type for the event callback"
-            },
-            "required": false,
-            "description": "Request type for the event callback",
-            "name": "x-webhook-response-type",
-            "in": "header"
-          }
-        ],
-        "requestBody": {
-          "description": "Event callback payload",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {},
-                "description": "Dynamic event payload structure"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Event callback processed successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "message"
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request or missing/invalid context header",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Connection not found or not accessible",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to process event callback",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
                       "type": "string"
                     }
                   },

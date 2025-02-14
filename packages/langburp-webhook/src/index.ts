@@ -1,15 +1,16 @@
 import type {
-  WebhookMessageReceivedBodySchema,
-  WebhookSlashCommandReceivedBodySchema,
-  WebhookConnectionConnectedBodySchema,
-  WebhookConnectionUserConnectedBodySchema,
-  WebhookRequestBodySchema,
+  WebhookMessageReceivedRequestBody,
+  WebhookSlashCommandReceivedRequestBody,
+  WebhookConnectionConnectedRequestBody,
+  WebhookConnectionUserConnectedRequestBody,
+  WebhookRequestBody,
   LangburpClientParams,
+  PostMessageRequestBody,
 } from "@langburp/langburp-js";
 import { LangburpClient } from "@langburp/langburp-js";
 import { isVerifiedLangburpWebhook, LangburpWebhookVerificationHeaders } from "./verify-webhook";
 
-type HandlerMessageRespondFn = (message: string | { message: { text: string } }) => Promise<void>;
+type HandlerMessageRespondFn = (message: PostMessageRequestBody) => Promise<void>;
 
 type HandlerArgs = {
   client: LangburpClient;
@@ -17,15 +18,15 @@ type HandlerArgs = {
 
 type MessageHandlerArgs = {
   respond: HandlerMessageRespondFn;
-} & HandlerArgs & WebhookMessageReceivedBodySchema
+} & HandlerArgs & WebhookMessageReceivedRequestBody
 
 type MessageHandler = (body: MessageHandlerArgs) => Promise<void>;
 
-type SlashCommandHandler = (body: WebhookSlashCommandReceivedBodySchema) => Promise<void>;
+type SlashCommandHandler = (body: WebhookSlashCommandReceivedRequestBody) => Promise<void>;
 
-type ConnectionHandler = (body: WebhookConnectionConnectedBodySchema) => Promise<void>;
+type ConnectionHandler = (body: WebhookConnectionConnectedRequestBody) => Promise<void>;
 
-type ConnectionUserHandler = (body: WebhookConnectionUserConnectedBodySchema) => Promise<void>;
+type ConnectionUserHandler = (body: WebhookConnectionUserConnectedRequestBody) => Promise<void>;
 
 export class LangburpWebhookResponder {
   private client: LangburpClient;
@@ -79,7 +80,7 @@ export class LangburpWebhookResponder {
     rawBody: string;
     headers: LangburpWebhookVerificationHeaders;
   }): Promise<Promise<void>[]> {
-    const body = JSON.parse(rawBody) as WebhookRequestBodySchema;
+    const body = JSON.parse(rawBody) as WebhookRequestBody;
     if (!isVerifiedLangburpWebhook({
       signingSecret: this.secretApiKey,
       body: rawBody,
@@ -90,7 +91,7 @@ export class LangburpWebhookResponder {
     return this.processVerifiedWebhook(body);
   }
 
-  processVerifiedWebhook(body: WebhookRequestBodySchema): Promise<void>[] {
+  processVerifiedWebhook(body: WebhookRequestBody): Promise<void>[] {
     const promises: Promise<void>[] = [];
     switch (body.event) {
       case 'message':
@@ -99,13 +100,11 @@ export class LangburpWebhookResponder {
             promises.push(handler({
               ...body,
               client: this.client,
-              respond: async (message: string | { message: { text: string } }) => {
-                await this.client.webhookCallback(body, typeof message === 'string' ? {
-                  message: {
-                    text: message,
-                  },
-                } : {
-                  message: message.message,
+              respond: async (message) => {
+                await this.client.messages.conversationPostMessage({
+                  connectionId: body.connection.id,
+                  conversationId: body.payload.conversationId,
+                  postMessageRequestBody: message,
                 });
               },
             }));

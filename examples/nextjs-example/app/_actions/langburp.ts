@@ -18,7 +18,7 @@ export async function authorizeEndUserForLangburp(state?: string) {
 
     // Authorize the end user for Langburp and return the authorization response to the Langburp client library
     return await langburpClient.endUserAuth.authorizeEndUser({
-      authorizeEndUserSchema: {
+      authorizeEndUserRequestBody: {
         state,
         connectionMetadata: {
           id: organization.id,
