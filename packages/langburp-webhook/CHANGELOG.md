@@ -1,5 +1,13 @@
 # @langburp/webhook
 
+## 0.0.5
+
+### Patch Changes
+
+- ecd5c3e: api refactoring
+- Updated dependencies [ecd5c3e]
+  - @langburp/langburp-js@0.0.5
+
 ## 0.0.4
 
 ### Patch Changes
